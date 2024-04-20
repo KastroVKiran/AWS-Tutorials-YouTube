@@ -1,0 +1,65 @@
+===================
+S3 Access Point
+===================
+
+-----------------------------------
+1. Bucket Policy
+-----------------------------------
+URL: https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-policies.html#access-points-delegating-control
+
+{
+    "Version": "2012-10-17",
+    "Statement" : [
+    {
+        "Effect": "Allow",
+        "Principal" : { "AWS": "*" },
+        "Action" : "*",
+        "Resource" : [ "Bucket ARN", "Bucket ARN/*"],
+        "Condition": {
+            "StringEquals" : { "s3:DataAccessPointAccount" : "Bucket owner's account ID" }
+        }
+    }]
+}
+
+-----------------------------------
+2. IAM User(s) Policy
+-----------------------------------
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "VisualEditor0",
+			"Effect": "Allow",
+			"Action": [
+				"s3:GetAccessPoint",
+				"s3:ListAllMyBuckets",
+				"s3:ListAccessPoints",
+				"s3:ListBucket",
+				"s3:ListMultiRegionAccessPoints"
+			],
+			"Resource": "*"
+		}
+	]
+}
+
+-----------------------------------
+3. Access Point Policy
+-----------------------------------
+URL: https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-policies.html?icmpid=docs_amazons3_console
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::<AWS Account ID>:user/<IAM User Name>"
+            },
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject"
+            ],
+            "Resource": "arn:aws:s3:<BucketRegionCode>:<AWS Account ID>:accesspoint/<AccessPointName>/object/<Folder1Name>/*"
+        }
+    ]
+}
